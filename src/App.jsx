@@ -1,24 +1,15 @@
 import React, { useState, useMemo } from "react";
 
+ 
+const MemoizedComponent = React.memo(({ number }) => {
+  console.log("MemoizedComponent rendering...");
+  return <p>{number}</p>;
+});
+
 const App = () => {
   const [number, setNumber] = useState(0);
   const [dark, setDark] = useState(false);
-
-  // Wrap the slow function inside useMemo
-  const slowFunction = useMemo(() => {
-    return (num) => {
-      console.log("Slow function started");
-      const startTime = Date.now();
-      while (Date.now() - startTime < 200) {
-        // Simulate a slow function
-      }
-      console.log("Slow function completed");
-      return num * 2;
-    };
-  }, []); // Dependency array is empty as the slow function doesn't depend on any other state or props
-
-  // Call the slowFunction inside the component
-  const double = slowFunction(number);
+  const [render, setRender] = useState(0);
 
   const themeStyle = {
     backgroundColor: dark ? "black" : "white",
@@ -37,11 +28,22 @@ const App = () => {
       <button
         onClick={() => {
           setDark(!dark);
+          console.log("Only the app Component getting rendering ")
         }}
       >
         Change Theme
       </button>
-      <p style={themeStyle}>{double}</p>
+      <button
+        onClick={() => {
+          setRender(render + 1);
+        }}
+      >
+        Load comonent
+      </button>
+      {/* Wrap the MemoizedComponent with React.memo */}
+      <MemoizedComponent number={render} />
+
+      <p style={themeStyle}>{number}</p>
     </>
   );
 };
